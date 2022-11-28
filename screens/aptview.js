@@ -21,14 +21,18 @@ const AptView = ( {navigation} ) => {
         setDate(currentDate);
       };
     
-    const showMode = (currentMode) => {
+      const showMode = (currentMode) => {
+        var today = new Date()
         DateTimePickerAndroid.open({
             value: date,
             onChange,
             mode: currentMode,
-            is24Hour: true,
+            is24Hour: false,
+            minimumDate: (today),
+            maximumDate: (new Date(today.getFullYear(), today.getMonth(), today.getDate()+7)),
+            minuteInterval: (10),
         }, 
-    );
+        );
     };
 
     const showDatepicker = () => {
