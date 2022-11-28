@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
     TextInput,
     Button,
     Alert,
+    TouchableOpacity
     
    } from 'react-native';
  
@@ -57,7 +58,10 @@ import React, { useState, useEffect } from 'react';
             placeholderTextColor= 'gray'
             secureTextEntry
             />
-        <Button onPress={myfun} title="Update"></Button>
+
+        <TouchableOpacity onPress={myfun} style={styles.appButtonContainer}>
+          <Text style={styles.appButtonText}>Update</Text>
+        </TouchableOpacity>
 
       </View>
         
@@ -69,6 +73,22 @@ import React, { useState, useEffect } from 'react';
    )
  }
  const styles = StyleSheet.create({  
+  appButtonContainer: {
+    elevation: 8,
+    backgroundColor: "#011387",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    marginTop:10
+  },
+  appButtonText: {
+    fontSize: 18,
+    color: "white",
+    fontWeight: "bold",
+    alignSelf: "center",
+    textTransform: "uppercase"
+  },
+
   back:{
     height:20,
     marginTop:50,
@@ -86,9 +106,9 @@ import React, { useState, useEffect } from 'react';
     color:'black',
     textAlign:'center',
     fontWeight:'bold',
-    fontSize:35,
-    fontFamily:'sans-serif-light',
-    marginTop:20,
+    fontSize:30,
+    fontFamily:'sans-serif-condensed',
+    marginTop:40,
 
    },
 
@@ -126,10 +146,10 @@ import React, { useState, useEffect } from 'react';
 
   user:{
     padding:10,
-    fontSize:20,
+    fontSize:15,
     color:'black',
     fontWeight:'bold',
-    marginLeft:20,
+    alignSelf:'center',
     marginTop:12,
   },
 

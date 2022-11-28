@@ -77,7 +77,7 @@ import React, { useState, useEffect } from 'react';
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 12,
-    marginTop:35
+    marginTop:10
   },
   appButtonText: {
     fontSize: 18,

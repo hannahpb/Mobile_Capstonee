@@ -67,15 +67,15 @@ import React, { useState, useEffect } from 'react';
    return (
 
     <ScrollView>
-     <View style={{ flex:1, alignItems: 'center' }}>  
+     <View style={{ alignItems: 'center' }}>  
       <View>
         <Text style={styles.editheader}>Edit Profile</Text>
       </View>
       <View style = {{ marginRight: 150, marginTop: -15 }}>
       </View>
       <View>
-        <Text style={{ marginTop: 25, textAlign: 'center' }}>First Name: {data.fname}</Text>
-        <Text style={{ textAlign: 'center' }}>Last Name: {data.lname}</Text>
+        <Text style={{ marginTop: 90, textAlign: 'center', fontSize:20, color:'black', fontFamily:'sans-serif-condensed', marginLeft:-190  }}>First Name: {data.fname}</Text>
+        <Text style={{ textAlign: 'center', fontSize:20, color:'black', fontFamily:'sans-serif-condensed',  marginLeft:-125 }}>Last Name: {data.lname}</Text>
         <Text style={styles.user}>Username</Text>
         <TextInput 
             style = { styles.input }
@@ -112,7 +112,7 @@ import React, { useState, useEffect } from 'react';
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 12,
-    marginTop:35
+    marginTop:10
   },
   appButtonText: {
     fontSize: 18,

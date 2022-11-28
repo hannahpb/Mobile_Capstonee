@@ -3,7 +3,7 @@ import {
     StyleSheet, Text, View, TouchableOpacity, Dimensions, ScrollView
 } from 'react-native'
 
-const options = ['9PM-10PM' , '10AM-11AM','11AM-12PM' , '1PM-2PM','2PM-3PM' , '3PM-4PM', '4PM-5PM'];
+const options = ['9AM-10AM' , '10AM-11AM','11AM-12PM' , '1PM-2PM','2PM-3PM' , '3PM-4PM', '4PM-5PM'];
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
