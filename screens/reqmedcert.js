@@ -6,7 +6,7 @@ const ReqMed = ( {navigation} ) => {
     var v_id = global.id
     var v_fname = global.fname
     var v_lname = global.lname
-    var v_ver = "TBA"
+    var v_ver = "Processing"
     var v_doc = "TBA"
 
     const [isLoading, setLoading] = useState(true);

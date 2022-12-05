@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {View, Button, Text, TextInput, StyleSheet, Alert, TouchableOpacity, Modal} from 'react-native';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { MDPicker } from './components/MD';
+import { Dropdown } from 'react-native-element-dropdown';
+
 
 const AptView = ( {navigation} ) => {
     const [name, setName] = useState('');
@@ -9,30 +11,75 @@ const AptView = ( {navigation} ) => {
 
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
-    const [t, setT] = useState('Select Time...');
 
     const [isModalVisible, setisModalVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
 
     const [date, setDate] = useState(new Date());
 
+    //timepicker
+    const [focus, setfocus] = useState(false);
+    const [value, setValue] = useState(null);
+    const [newtime, setNewTime] = useState([]);
+
+    const gettime = async () => {
+        try {
+        const response = await fetch(`http://10.0.2.2:8000/api/allapt`);
+        const json = await response.json();
+        const selectTime = json.apt.map((apt) => ({
+            label: apt.apttime,
+            value: apt.apttime,
+        }));
+        const selectDate = json.apt.map((appointment) => (
+            appointment.aptdate
+        ));
+        const data = [
+          {label: '9:00AM-10:00AM', value: '9:00AM-10:00AM'},
+          {label: '10:00AM-11:00AM', value: '10:00AM-11:00AM'},
+          {label: '11:00AM-12:00PM', value: '11:00AM-12:00PM'},
+          {label: '1:00PM-2:00PM', value: '1:00PM-2:00PM'},
+          {label: '2:00PM-3:00PM', value: '2:00PM-3:00PM'},
+          {label: '3:00PM-4:00PM', value: '3:00PM-4:00PM'},
+          {label: '4:00PM-5:00PM', value: '4:00PM-5:00PM'},
+        ];
+
+        console.log(selectDate)
+
+        // if the selected date exists in the API, this will remove the time that already exists in the API
+        if (selectDate.includes(date.toLocaleDateString()) == true)
+        { 
+            filteredArray = data.filter(array => !selectTime.find(label => (label.label === array.label && array.value === label.value) ))
+            setNewTime(filteredArray);
+        } 
+        // if not, return all time in data
+        if (selectDate.includes(date.toLocaleDateString()) == false)
+        {
+            setNewTime(data);
+        }
+        } catch (error) {
+        console.error(error);
+        } finally {
+        setLoading(false);
+        }
+    }
+
+
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate;
         setDate(currentDate);
       };
     
-      const showMode = (currentMode) => {
-        var today = new Date()
+    const showMode = (currentMode) => {
+        var date = new Date()
         DateTimePickerAndroid.open({
             value: date,
             onChange,
             mode: currentMode,
-            is24Hour: false,
-            minimumDate: (today),
-            maximumDate: (new Date(today.getFullYear(), today.getMonth(), today.getDate()+7)),
-            minuteInterval: (10),
+            minimumDate: (date),
+            maximumDate: (new Date(date.getFullYear(), date.getMonth(), date.getDate()+6)),
+            is24Hour: true,
         }, 
-        );
+    );
     };
 
     const showDatepicker = () => {
@@ -61,6 +108,7 @@ const AptView = ( {navigation} ) => {
 
     useEffect(() => {
         getApt();
+        gettime();
     }, []);
 
     const AddApt = async () => {
@@ -76,22 +124,15 @@ const AptView = ( {navigation} ) => {
                     lname: z,
                     aptcategory: ct,
                     aptdate: date.toLocaleDateString(),
-                    apttime: t,
+                    apttime: value,
                     aptpurpose: purpose,
                     aptverify: v_ver,
                     user_id: x,
                 })
             });
-            if ((response).status === 201) {
-                setName('');
-                setCategory('');
-                setDate('');
-                setT('');
+            if ((response).status === 200) {
                 setPurpose('');
-                setid('');
             }
-            Alert.alert('Appointment Set!');
-            navigation.navigate('Appointment');
         const json = await response.json();
         setData(json.appointment);
         } catch (error) {
@@ -101,20 +142,18 @@ const AptView = ( {navigation} ) => {
         }
     }
 
-    const changeModalVisibility = (bool) => {
-        setisModalVisible(bool)
-    }
-
-    const settheData = (option) => {
-        setChooseData(option)
-    }
-
-    const cmv = (bool) => {
-        setModalVisible(bool)
-    }
-
-    const sd = (option) => {
-        setT(option)
+    const user_validation = () => {
+        errors = [];
+        if (purpose.length == 0){
+            errors.push("Complete the Form")
+        }
+        if (errors.length == 0){
+            AddApt();
+            Alert.alert('Appointment Set!');
+            navigation.navigate('Appointment');
+        }else{
+            Alert.alert("Error!", errors.join('\n'))
+        }
     }
 
     return(
@@ -126,30 +165,37 @@ const AptView = ( {navigation} ) => {
                 <Text style={styles.appButtonText}>Select Date</Text>
             </TouchableOpacity>
 
+            <Text style={styles.date}>{date.toLocaleDateString()}</Text>
 
-            <TouchableOpacity style={styles.opt} onPress={() => cmv(true) }>
-                <Text>{t}</Text>
-            </TouchableOpacity>
-            <Modal
-                transparent={true}
-                animationType='fade'
-                visible={modalVisible}
-                nRequestClose={() => cmv(false)}
-            >
-                <MDPicker 
-                    changeModalVisibility={cmv}
-                    setData={setT}
-                />
-            </Modal>
+            <Dropdown
+                style={[styles.input, focus]}
+                iconStyle={styles.iconStyle}
+                data={newtime}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!focus ? 'Select Time' : '...'}
+                searchPlaceholder="Search..."
+                value={value}
+                onFocus={() => [setfocus(true), gettime()]}
+                onBlur={() => setfocus(false)}
+                onChange={item => {
+                setValue(item.value);
+                setfocus(false);
+                }}
+            />
+
 
             <TextInput 
             style = { styles.input }
             onChangeText = { (text) => [setPurpose(text)] }
             placeholder='Enter purpose'
             placeholderTextColor= 'gray'
+            value={purpose}
             />
 
-            <TouchableOpacity onPress={ AddApt } style={styles.appButtonContainer}>
+            <TouchableOpacity onPress={  user_validation } style={styles.appButtonContainer}>
                 <Text style={styles.appButtonText}>Set Appointment</Text>
             </TouchableOpacity>
 
@@ -204,7 +250,14 @@ const styles = StyleSheet.create({
         borderRadius:10,
         marginBottom:10,
         width:290,
-    }
+    },
+    date:{
+        fontSize:25,
+        fontFamily:'sans-serif-condensed',
+        marginTop:15,
+        color:'black'
+
+    },
 })
 
 export default AptView;

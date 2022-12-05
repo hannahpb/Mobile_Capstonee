@@ -2,26 +2,27 @@ import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Image, Text, TextInput,TouchableOpacity, ActivityIndicator, FlatList} from 'react-native';
 
 const MedCert = ( {navigation} ) => {
-    const [isLoading, setLoading] = useState(true);
-    const [data, setData] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
 
-    let parameter = global.fname
+  let parameter = global.id
 
-    const getMed = async () => {
-        try {
-        const response = await fetch(`http://10.0.2.2:8000/api/medi/${parameter}`);
-        const json = await response.json();
-        setData(json.reqmed);
-        } catch (error) {
-        console.error(error);
-        } finally {
-        setLoading(false);
-        }
-    }
+  const getMed = async () => {
+      try {
+      const response = await fetch(`http://10.0.2.2:8000/api/find-medcert/${parameter}`);
+      const json = await response.json();
+      setData(json.medrec);
+      } catch (error) {
+      console.error(error);
+      } finally {
+      setLoading(false);
+      }
+  }
 
-    useEffect(() => {
-        getMed();
-    }, []);
+  useEffect(() => {
+      getMed();
+  }, []);
+
 
     return(
         <View style = {{ padding: 30 }}>

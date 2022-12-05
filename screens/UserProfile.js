@@ -12,7 +12,7 @@ import React, { useState, useEffect } from 'react';
     
    } from 'react-native';
  
- const UserProfile = ({navigation}) => {
+   const UserProfile = ({navigation}) => {
 
     const [data, setData] = useState('');
     const [isLoading, setLoading] = useState(true);
@@ -37,6 +37,25 @@ import React, { useState, useEffect } from 'react';
     useEffect(() => {
         getUserDetails();
     }, []);
+
+    const [chkemail, setchkemail] = useState(false);
+    const checkemail = text => {
+          let regex = /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/;
+  
+          if(regex.test(text)){
+              setchkemail(false);
+          } else {
+              setchkemail(true);
+          }
+      }
+    const [checkValidUN, setCheckValidUN] = useState(false);
+    const checkUN = text => {
+        if (text.length < 4){
+            setCheckValidUN(true);
+        }else{
+            setCheckValidUN(false);
+        }
+    }
  
     const Update = async () => {
         try{
@@ -56,14 +75,31 @@ import React, { useState, useEffect } from 'react';
                 setUsername('');
                 setPw('');
             }
-            Alert.alert('User Updated!');
-            navigation.navigate('User');
         } catch (error) {
         console.error(error);
         } finally {
         setLoading(false);
         }
     }
+
+    const user_validation = () => {
+      errors = [];
+
+      let regex2 = /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/;
+      if(regex2.test(email) == false){
+          errors.push("Invalid Email format")
+      }
+      if (username.length < 4){
+          errors.push("Username should have at least 4 characters")
+      }
+      if (errors.length == 0){
+          Update();
+          Alert.alert('User Updated!');
+          navigation.navigate('User');
+      }else{
+          Alert.alert("Error!", errors.join('\n'))
+      }
+  }
    return (
 
     <ScrollView>
@@ -75,25 +111,39 @@ import React, { useState, useEffect } from 'react';
       </View>
       <View>
         <Text style={{ marginTop: 90, textAlign: 'center', fontSize:20, color:'black', fontFamily:'sans-serif-condensed', marginLeft:-190  }}>First Name: {data.fname}</Text>
-        <Text style={{ textAlign: 'center', fontSize:20, color:'black', fontFamily:'sans-serif-condensed',  marginLeft:-125 }}>Last Name: {data.lname}</Text>
+        <Text style={{ textAlign: 'center', fontSize:20, color:'black', fontFamily:'sans-serif-condensed',  marginLeft:-170 }}>Last Name: {data.lname}</Text>
         <Text style={styles.user}>Username</Text>
         <TextInput 
             style = { styles.input }
-            onChangeText = { (text) => [setUsername(text)] }
+            onChangeText = { (text) => [checkUN(text) ,setUsername(text)] }
             placeholder='Enter Username'
             placeholderTextColor= 'gray'
             maxLength={15} 
+            defaultValue={data.username}
             />
+        {
+          checkValidUN ? (
+              <Text style={{ color: 'red' }}>Invalid Username Format</Text>
+              ) : (
+              <Text></Text>
+          )
+        }
         <Text style={styles.email}>Email Address</Text>
         <TextInput 
             style = { styles.input }
-            onChangeText = { (text) => [setEmail(text)] }
+            onChangeText = { (text) => [checkemail(text) ,setEmail(text)] }
             placeholder='Enter Email'
             placeholderTextColor= 'gray'
+            defaultValue={data.email}
             />
-        
-        
-        <TouchableOpacity onPress={Update} style={styles.appButtonContainer}>
+          {
+            chkemail ? (
+                <Text style={{ color: 'red' }}>Invalid Email Format</Text>
+                ) : (
+                <Text></Text>
+            )
+            }
+        <TouchableOpacity onPress={user_validation} style={styles.appButtonContainer}>
                 <Text style={styles.appButtonText}>Update</Text>
         </TouchableOpacity>
 
